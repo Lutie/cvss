@@ -1,18 +1,17 @@
 {
-  "name": "@neuralegion/cvss",
-  "version": "0.0.0",
+  "name": "@jeremiebedjai/cvss",
+  "version": "1.0.0",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NeuraLegion/cvss.git"
+    "url": "git+https://github.com/jeremiebedjai/cvss.git"
   },
   "author": {
-    "name": "Viachaslau Tyshkavets",
-    "email": "viachaslau.tyshkavets@neuralegion.com"
+    "name": "BEDJAI Jérémie"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/NeuraLegion/cvss/issues"
+    "url": "https://github.com/jeremiebedjai/cvss/issues"
   },
   "husky": {
     "hooks": {
