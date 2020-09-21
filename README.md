@@ -1,3 +1,5 @@
+This is a fork of the [CVSS calculator library by NeuraLegion](https://github.com/NeuraLegion/cvss), adding full support of the environmental and temporal scopes.
+
 # cvss
 
 The Common Vulnerability Scoring System ([CVSS](https://www.first.org/cvss/)) [base](https://www.first.org/cvss/specification-document#Base-Metrics) [score](https://www.first.org/cvss/specification-document#1-2-Scoring) calculator and validator library written in [TypeScript](https://www.typescriptlang.org/).
@@ -19,7 +21,7 @@ Score is: [3.8](https://www.first.org/cvss/calculator/3.1#CVSS:3.1/AV:N/AC:L/PR:
 
 ### Current library limitations 🚧  
 
-CVSS specification defines three metric groups: `Base`, `Temporal`, and `Environmental`, but only `Base` metrics are supported by given library for now.
+~~CVSS specification defines three metric groups: `Base`, `Temporal`, and `Environmental`, but only `Base` metrics are supported by given library for now.~~
 
 Supported CVSS versions: [3.0](https://www.first.org/cvss/v3-0/) and [3.1](https://www.first.org/cvss/v3-1/)
 
@@ -88,7 +90,8 @@ Return un-abbreviated metric value: e.g. 'Network' for input ('AV', 'N')
 ```
 import { calculateBaseScore } from 'cvss';
 
-console.log('score: ', calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N'));
+const { score } = calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N');
+console.log('score: ', score);
 ```
 </details>
 
@@ -98,7 +101,8 @@ console.log('score: ', calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/
 ```
 const cvss = require('cvss');
 
-console.log(cvss.calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N'));
+const { score } = calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N');
+console.log(score);
 ```
 </details>
 
@@ -111,7 +115,8 @@ console.log(cvss.calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:
 ```
 import cvss from 'cvss';
 
-console.log(cvss.calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N'));
+const { score } = calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N');
+console.log(score);
 ```
 
 Running: `node --experimental-modules ./usage.mjs`
@@ -124,7 +129,7 @@ Running: `node --experimental-modules ./usage.mjs`
 ```
 <script src="./node_modules/cvss/dist/bundle.umd.js"></script>
 <script>
-  alert(`Score: ${cvss.calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N')}`);
+  alert(`Score: ${cvss.calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N').score}`);
 </script>
 ```
 </details>
@@ -135,7 +140,7 @@ Running: `node --experimental-modules ./usage.mjs`
 ```
 <script type="module">
   import { calculateBaseScore } from './node_modules/cvss/dist/bundle.es.js';
-  alert(`Score: ${calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N')}`);
+  alert(`Score: ${calculateBaseScore('CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N').score}`);
 </script>
 ```
 </details>

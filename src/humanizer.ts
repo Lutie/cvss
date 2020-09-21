@@ -1,7 +1,8 @@
-import { BaseMetric, BaseMetricValue } from './models';
+import { BaseMetric, Metric, MetricValue } from './models';
 
-export const humanizeBaseMetric = (baseMetric: BaseMetric): string => {
-  switch (baseMetric) {
+// TODO replace with mapping
+export const humanizeBaseMetric = (metric: Metric): string => {
+  switch (metric) {
     case BaseMetric.ATTACK_VECTOR:
       return 'Attack Vector';
     case BaseMetric.ATTACK_COMPLEXITY:
@@ -24,10 +25,7 @@ export const humanizeBaseMetric = (baseMetric: BaseMetric): string => {
 };
 
 // eslint-disable-next-line complexity
-export const humanizeBaseMetricValue = (
-  value: BaseMetricValue,
-  metric: BaseMetric
-): string => {
+export const humanizeBaseMetricValue = (value: MetricValue, metric: Metric): string => {
   switch (value) {
     case 'A':
       return 'Adjacent';
@@ -49,3 +47,8 @@ export const humanizeBaseMetricValue = (
       return 'Unknown';
   }
 };
+
+type RiskLevel = 'None' | 'Low' | 'Medium' | 'High' | 'Critical';
+
+export const toRiskStr = (score: number): RiskLevel =>
+  score <= 0 ? 'None' : score <= 3 ? 'Low' : score <= 6 ? 'Medium' : score <= 8.5 ? 'High' : 'Critical';
