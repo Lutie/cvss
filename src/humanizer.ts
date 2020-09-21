@@ -48,7 +48,11 @@ export const humanizeBaseMetricValue = (value: MetricValue, metric: Metric): str
   }
 };
 
-type RiskLevel = 'None' | 'Low' | 'Medium' | 'High' | 'Critical';
+type Severity = 'None' | 'Low' | 'Medium' | 'High' | 'Critical';
 
-export const toRiskStr = (score: number): RiskLevel =>
+/**
+ * Stringify an score into a severity string ('None' | 'Low' | 'Medium' | 'High' | 'Critical')
+ * @param score
+ */
+export const toSeverity = (score: number): Severity =>
   score <= 0 ? 'None' : score <= 3 ? 'Low' : score <= 6 ? 'Medium' : score <= 8.5 ? 'High' : 'Critical';
