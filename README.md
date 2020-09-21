@@ -27,7 +27,7 @@ Supported CVSS versions: [3.0](https://www.first.org/cvss/v3-0/) and [3.1](https
 
 ## Install 🚀 
 
-`npm i --save @neuralegion/cvss`
+`npm i --save @jeremiebedjai/cvss@1.0.0`
 
 ## API 
 
