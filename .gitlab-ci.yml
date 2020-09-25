@@ -8,7 +8,7 @@ publish:
   tags:
     - dev
   script:
-    - yarn build
+    - npm run build
   artifacts:
     paths:
       - ./dist
