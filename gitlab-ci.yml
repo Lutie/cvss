@@ -4,7 +4,7 @@ stages:
   - build
 
 publish:
-  stage: publish
+  stage: build
   tags:
     - dev
   script:
