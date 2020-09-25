@@ -20,7 +20,7 @@ coverage
 .nyc_output
 
 build
-dist
+# dist TODO remove from source code
 node_modules
 jspm_packages
 
