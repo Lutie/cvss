@@ -6,9 +6,10 @@ stages:
 publish:
   stage: build
   tags:
-    - dev
+    - dev-docker
   script:
-    - npm run build
+    - yarn install
+    - yarn build
   artifacts:
     paths:
       - ./dist
