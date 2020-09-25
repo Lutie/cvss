@@ -165,6 +165,7 @@ type ScoreResult = {
   score: number;
   impact: number;
   exploitability: number;
+  metricsMap: Map<Metric, MetricValue>;
 };
 
 // https://www.first.org/cvss/v3.0/specification-document#7-3-Environmental-Metrics-Equations
@@ -212,6 +213,7 @@ export const calculateEnvironmentalScore = (cvssString: string): ScoreResult => 
 
   return {
     score,
+    metricsMap,
     impact: impact <= 0 ? 0 : roundUp(impact),
     exploitability: impact <= 0 ? 0 : roundUp(exploitability)
   };
@@ -238,6 +240,7 @@ export const calculateBaseScore = (cvssString: string): ScoreResult => {
 
   return {
     score,
+    metricsMap,
     impact: impact <= 0 ? 0 : roundUp(impact),
     exploitability: impact <= 0 ? 0 : roundUp(exploitability)
   };
@@ -265,6 +268,7 @@ export const calculateTemporalScore = (cvssString: string): ScoreResult => {
 
   return {
     score: tempScore,
+    metricsMap,
     impact,
     exploitability
   };
