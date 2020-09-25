@@ -32,10 +32,10 @@ const temporalMetricValueScores: Record<TemporalMetric, Partial<Record<TemporalM
 };
 
 const environmentalMetricValueScores: Record<EnvironmentalMetric, Partial<Record<EnvironmentalMetricValue, number>> | null> = {
-  [EnvironmentalMetric.ATTACK_VECTOR]: { N: 0.85, A: 0.62, L: 0.55, P: 0.2, X: 1 },
-  [EnvironmentalMetric.ATTACK_COMPLEXITY]: { X: 1, L: 0.77, H: 0.44 },
+  [EnvironmentalMetric.ATTACK_VECTOR]: { N: 0.85, A: 0.62, L: 0.55, P: 0.2, X:  0.2 },
+  [EnvironmentalMetric.ATTACK_COMPLEXITY]: { X: 0.44, L: 0.77, H: 0.44 },
   [EnvironmentalMetric.PRIVILEGES_REQUIRED]: null,
-  [EnvironmentalMetric.USER_INTERACTION]: { N: 0.85, R: 0.62, X: 1 },
+  [EnvironmentalMetric.USER_INTERACTION]: { N: 0.85, R: 0.62, X: 0.62 },
   [EnvironmentalMetric.SCOPE]: { U: 0, C: 0, X: 0 },
   [EnvironmentalMetric.CONFIDENTIALITY]: { N: 0, L: 0.22, H: 0.56, X: 0.22 },
   [EnvironmentalMetric.INTEGRITY]: { N: 0, L: 0.22, H: 0.56, X: 0.22 },
@@ -51,6 +51,8 @@ const getPrivilegesRequiredNumericValue = (value: MetricValue, scopeValue: Metri
   }
 
   switch (value) {
+    case 'X':
+      return 0.85;
     case 'N':
       return 0.85;
     case 'L':
