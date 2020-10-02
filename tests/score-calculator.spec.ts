@@ -128,11 +128,10 @@ describe('calculator impact', () => {
   });
 
   it('Modified impact should be 0', () => {
-    const { impact, exploitability } = calculateBaseScore(
+    const { score } = calculateBaseScore(
       'CVSS:3.0/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N'
     );
     expect(score).to.equal(6.2);
-
   });
 
   it('Only base metrics dont impact on environmental score', () => {
