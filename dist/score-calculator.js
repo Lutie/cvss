@@ -23,7 +23,7 @@ const environmentalMetricValueScores = {
     [EnvironmentalMetric.USER_INTERACTION]: { N: 0.85, R: 0.62, X: 1 },
     [EnvironmentalMetric.SCOPE]: { U: 0, C: 0, X: 0 },
     [EnvironmentalMetric.CONFIDENTIALITY]: { N: 0, L: 0.22, H: 0.56, X: 0.22 },
-    [EnvironmentalMetric.INTEGRITY]: { N: 0, L: 0.22, H: 0.56, X: 0.22 },
+    [EnvironmentalMetric.INTEGRITY]: { N: 0, L: 0.22, H: 0.56, X: 0.56 },
     [EnvironmentalMetric.AVAILABILITY]: { N: 0, L: 0.22, H: 0.56, X: 0.22 },
     [EnvironmentalMetric.CONFIDENTIALITY_REQUIREMENT]: { M: 1, L: 0.5, H: 1.5, X: 1 },
     [EnvironmentalMetric.INTEGRITY_REQUIREMENT]: { M: 1, L: 0.5, H: 1.5, X: 1 },

@@ -110,7 +110,7 @@ describe('calculator for environmental scope', () => {
     expect(score).to.equal(4.8);
   });
 
-  it('should calculate "CVSS:3.0/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MS:C/MC:N/MI:H/MA:N" score as 5.6', () => {
+  it('Should calculate "CVSS:3.0/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MS:C/MC:N/MI:H/MA:N" environmental score as 5.6', () => {
     const { score } = calculateEnvironmentalScore(
       'CVSS:3.0/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MS:C/MC:N/MI:H/MA:N'
     );
@@ -118,8 +118,8 @@ describe('calculator for environmental scope', () => {
   });
 });
 
-describe('calculator impact', () => {
-  it('Base impact should be 0', () => {
+describe('Calculate correctly impact and exploitability', () => {
+  it('base impact should be 0', () => {
     const { impact, exploitability } = calculateBaseScore(
       'CVSS:3.0/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N'
     );
@@ -127,16 +127,16 @@ describe('calculator impact', () => {
     expect(exploitability).to.equal(1);
   });
 
-  it('Modified impact should be 0', () => {
+  it('should calculate "CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L" score as 6.2', () => {
     const { score } = calculateBaseScore(
-      'CVSS:3.0/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N'
+      'CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L'
     );
     expect(score).to.equal(6.2);
   });
 
-  it('Only base metrics dont impact on environmental score', () => {
+  it('only base metrics dont impact on environmental score', () => {
     const { score } = calculateEnvironmentalScore(
-      'CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L'
+      'CVSS:3.0/AV:A/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L'
     );
     expect(score).to.equal(6.2);
   });
