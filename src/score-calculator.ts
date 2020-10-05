@@ -133,10 +133,11 @@ export const calculateImpact = (metricsMap: Map<Metric, MetricValue>, iss: numbe
 // If ModifiedScope is Unchanged	6.42 × MISS
 // If ModifiedScope is Changed	7.52 × (MISS - 0.029) - 3.25 × (MISS × 0.9731 - 0.02)13
 // ModifiedExploitability =	8.22 × ModifiedAttackVector × ModifiedAttackComplexity × ModifiedPrivilegesRequired × ModifiedUserInteraction
-export const calculateMImpact = (metricsMap: Map<Metric, MetricValue>, miss: number): number =>
+// Note : Math.pow is 15 in 3.0 but 13 int 3.1
+export const calculateMImpact = (metricsMap: Map<Metric, MetricValue>, miss: number, versionStr: string | null): number =>
   metricsMap.get(EnvironmentalMetric.SCOPE) !== 'C'
     ? 6.42 * miss
-    : 7.52 * (miss - 0.029) - 3.25 * Math.pow(miss * 0.9731 - 0.02, 13);
+    : 7.52 * (miss - 0.029) - 3.25 * Math.pow(miss * 0.9731 - 0.02, versionStr === '3.0' ? 15 : 13);
 
 // https://www.first.org/cvss/v3.1/specification-document#7-1-Base-Metrics-Equations
 // Exploitability = 8.22 × AttackVector × AttackComplexity × PrivilegesRequired × UserInteraction
@@ -170,19 +171,12 @@ type ScoreResult = {
   metricsMap: Map<Metric, MetricValue>;
 };
 
-// https://www.first.org/cvss/v3.0/specification-document#7-3-Environmental-Metrics-Equations
+// https://www.first.org/cvss/v3.1/specification-document#7-3-Environmental-Metrics-Equations
 // If ModifiedImpact <= 0 =>	0; else
-// If ModifiedScope is	Roundup ( Roundup [Minimum ([ModifiedImpact + ModifiedExploitability], 10) ] × ExploitCodeMaturity × RemediationLevel × ReportConfidence)
-// Unchanged
-// If ModifiedScope is	Roundup (
-//   Roundup [
-//     Minimum (
-//       1.08 × [ModifiedImpact + ModifiedExploitability], 10
-//     )
-//   ] × ExploitCodeMaturity × RemediationLevel × ReportConfidence)
-// Changed
+// If ModifiedScope is Unchanged =>	Roundup (Roundup [Minimum ([ModifiedImpact + ModifiedExploitability], 10)] × ExploitCodeMaturity × RemediationLevel × ReportConfidence)
+// If ModifiedScope is Changed =>	Roundup (Roundup [Minimum (1.08 × [ModifiedImpact + ModifiedExploitability], 10)] × ExploitCodeMaturity × RemediationLevel × ReportConfidence)
 export const calculateEnvironmentalScore = (cvssString: string): ScoreResult => {
-  const { metricsMap } = validate(cvssString);
+  const { metricsMap, versionStr } = validate(cvssString);
 
   // populate temp and env metrics if not provided
   [...temporalMetrics, ...environmentalMetrics].map((metric) => {
@@ -192,7 +186,7 @@ export const calculateEnvironmentalScore = (cvssString: string): ScoreResult => 
   });
 
   const miss = calculateMiss(metricsMap);
-  const impact = calculateMImpact(metricsMap, miss);
+  const impact = calculateMImpact(metricsMap, miss, versionStr);
   const exploitability = calculateMExploitability(metricsMap);
   const scopeUnchanged = metricsMap.get(EnvironmentalMetric.SCOPE) !== 'C';
 

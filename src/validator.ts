@@ -73,6 +73,7 @@ type ValidationResult = {
   isTemporal: boolean;
   isEnvironmental: boolean;
   metricsMap: Map<Metric, MetricValue>;
+  versionStr: string | null;
 };
 
 /**
@@ -103,6 +104,7 @@ export const validate = (cvssStr: string): ValidationResult => {
   return {
     metricsMap,
     isTemporal,
-    isEnvironmental
+    isEnvironmental,
+    versionStr,
   };
 };
