@@ -51,10 +51,9 @@ const getPrivilegesRequiredNumericValue = (value: MetricValue, scopeValue: Metri
   }
 
   switch (value) {
-    case 'X':
-      return 0.85;
     case 'N':
       return 0.85;
+    case 'X':
     case 'L':
       return scopeValue !== 'C' ? 0.62 : 0.68;
     case 'H':

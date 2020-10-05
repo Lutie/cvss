@@ -4,6 +4,7 @@ declare type ValidationResult = {
     isTemporal: boolean;
     isEnvironmental: boolean;
     metricsMap: Map<Metric, MetricValue>;
+    versionStr: string | null;
 };
 /**
  * Validate that the given string is a valid cvss vector

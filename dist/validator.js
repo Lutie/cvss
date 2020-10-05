@@ -67,6 +67,7 @@ export const validate = (cvssStr) => {
     return {
         metricsMap,
         isTemporal,
-        isEnvironmental
+        isEnvironmental,
+        versionStr,
     };
 };
