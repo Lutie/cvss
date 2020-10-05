@@ -37,6 +37,7 @@ const getPrivilegesRequiredNumericValue = (value, scopeValue) => {
         case 'N':
             return 0.85;
         case 'L':
+        case 'X':
             return scopeValue !== 'C' ? 0.62 : 0.68;
         case 'H':
             return scopeValue !== 'C' ? 0.27 : 0.5;
