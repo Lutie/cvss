@@ -46,7 +46,9 @@
   },
   "homepage": "https://github.com/NeuraLegion/cvss#readme",
   "dependencies": {
-    "tslib": "^2.0.1",
+    "tslib": "^2.0.1"
+  },
+  "devDependencies": {
     "@commitlint/cli": "^9.0.1",
     "@commitlint/config-conventional": "^9.0.1",
     "@types/chai": "^4.2.11",
