@@ -35,7 +35,7 @@ export type AnyMetric = BaseMetric & TemporalMetric & EnvironmentalMetric;
 export type BaseMetricValue = 'A' | 'C' | 'H' | 'L' | 'N' | 'P' | 'R' | 'U';
 export type TemporalMetricValue = 'X' | 'F' | 'H' | 'O' | 'T' | 'W' | 'U' | 'P' | 'C' | 'R';
 export type EnvironmentalMetricValue = BaseMetricValue | 'M' | 'X';
-export type MetricValue = BaseMetricValue | TemporalMetricValue | EnvironmentalMetricValue;
+export type MetricValue = BaseMetricValue | TemporalMetricValue | EnvironmentalMetricValue | any;
 
 export type MetricValues<M extends Metric = Metric, V extends MetricValue = MetricValue> = Record<M, V[]>;
 
@@ -103,3 +103,14 @@ export const environmentalMetrics: Metrics<EnvironmentalMetric> = [
   EnvironmentalMetric.CONFIDENTIALITY_REQUIREMENT,
   EnvironmentalMetric.INTEGRITY_REQUIREMENT
 ];
+
+export const metricsIndex: {[key: string]: BaseMetric} = {
+  'MAV': BaseMetric.ATTACK_VECTOR,
+  'MAC': BaseMetric.ATTACK_COMPLEXITY, 
+  'MPR': BaseMetric.PRIVILEGES_REQUIRED,
+  'MUI': BaseMetric.USER_INTERACTION,
+  'MS': BaseMetric.SCOPE,
+  'MC': BaseMetric.CONFIDENTIALITY,
+  'MI': BaseMetric.INTEGRITY,
+  'MA': BaseMetric.AVAILABILITY,
+};

@@ -1,45 +1,34 @@
 import { calculateBaseScore, calculateEnvironmentalScore, calculateTemporalScore } from '../src';
 import { expect } from 'chai';
 
+// CVSS => base, temporal, environmental
+const cvssTests = {
+  'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N': [8.6, 8.6, 8.6],
+  'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H': [10.0, 10.0, 10.0],
+  'CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:N': [0.0, 0.0, 0.0],
+  'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N': [7.5, 7.5, 7.5],
+  'CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H': [7.8, 7.8, 7.8],
+  'CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N': [6.4, 6.4, 6.4],
+  'CVSS:3.1/S:C/C:L/I:L/A:N/AV:N/AC:L/PR:L/UI:N': [6.4, 6.4, 6.4],
+  'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:M/IR:M/AR:M/MAV:A/MAC:H/MPR:L/MUI:N/MS:X/MC:N/MI:H/MA:X': [5.1, 4.1, 5.2],
+  'CVSS:3.1/AV:A/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N/E:U/RL:T/RC:C/CR:X/IR:L/AR:L/MAV:N/MAC:H/MPR:L/MUI:N/MS:U/MC:L/MI:L/MA:L': [4.6, 4.1, 3.6],
+  'CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:N/A:N/E:P/RL:W/RC:C/IR:L/AR:L/MAV:A/MAC:H/MPR:L/MUI:N/MS:C/MI:L/MA:L': [3.0, 2.8, 4.0],
+  'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N': [5.1, 4.1, 0.0],
+  'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:H/RL:U/RC:C/CR:M/IR:M/AR:M/MAV:N/MAC:L/MPR:N/MUI:N/MS:C/MC:H/MI:H/MA:H': [5.1, 5.1, 10.0],
+  'CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:M/IR:M/AR:L/MAV:N/MAC:H/MPR:N/MUI:R/MS:U/MC:N/MI:N/MA:L': [3.8, 3.8, 2.4],
+  'CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MC:N/MI:H/MA:N': [3.8, 3.8, 4.8],
+  'CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MS:C/MC:N/MI:H/MA:N': [3.8, 3.8, 5.6],
+  'CVSS:3.1/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L': [6.2, 6.2, 6.1],
+  'CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L': [6.2, 6.2, 6.2],
+  'CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L': [6.2, 6.2, 6.2],
+  'CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/CR:H': [6.2, 6.2, 6.4],
+  'CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/CR:H/IR:H/MAV:L/MUI:R/MS:U/MC:L': [6.2, 6.2, 7.0],
+  'CVSS:3.1/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L':  [6.2, 6.2, 6.1],
+  'CVSS:3.1/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/MUI:R/MS:U/MC:L': [6.2, 6.2, 5.1],
+  'CVSS:3.1/AV:P/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:M/IR:M/AR:M/MAV:A/MAC:L/MPR:L/MUI:N/MC:N/MI:H': [4.4, 3.5, 6.1],
+}
+
 describe('Calculator', () => {
-  it('should calculate "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N" score as 8.6', () => {
-    const { score } = calculateBaseScore('CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N');
-    expect(score).to.equal(8.6);
-  });
-
-  it('should calculate "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H" score as 10.0', () => {
-    const { score } = calculateBaseScore('CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H');
-    expect(score).to.equal(10);
-  });
-
-  it('should calculate "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:N" score as 0.0', () => {
-    const { score } = calculateBaseScore('CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:N');
-    expect(score).to.equal(0);
-  });
-
-  // https://www.first.org/cvss/user-guide#3-1-CVSS-Scoring-in-the-Exploit-Life-Cycle
-  it('should calculate "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N" score as 7.5', () => {
-    const { score } = calculateBaseScore('CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N');
-    expect(score).to.equal(7.5);
-  });
-
-  // https://www.first.org/cvss/user-guide#3-1-CVSS-Scoring-in-the-Exploit-Life-Cycle
-  it('should calculate "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H" score as 7.8', () => {
-    const { score } = calculateBaseScore('CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H');
-    expect(score).to.equal(7.8);
-  });
-
-  // https://www.first.org/cvss/user-guide#3-6-Vulnerable-Components-Protected-by-a-Firewall
-  it('should calculate "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N" score as 6.4', () => {
-    const { score } = calculateBaseScore('CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N');
-    expect(score).to.equal(6.4);
-  });
-
-  it('should calculate "CVSS:3.1/S:C/C:L/I:L/A:N/AV:N/AC:L/PR:L/UI:N" (non-normalized order) score as 6.4', () => {
-    const { score } = calculateBaseScore('CVSS:3.1/S:C/C:L/I:L/A:N/AV:N/AC:L/PR:L/UI:N');
-    expect(score).to.equal(6.4);
-  });
-
   // https://www.first.org/cvss/user-guide#3-1-CVSS-Scoring-in-the-Exploit-Life-Cycle
   it('should throw an exception on empty value', () => {
     expect(() => calculateBaseScore('')).to.throw();
@@ -56,101 +45,35 @@ describe('Calculator', () => {
   });
 });
 
-describe('Calculator for temporal scope', () => {
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:M/IR:M/AR:M/MAV:A/MAC:H/MPR:L/MUI:N/MS:X/MC:N/MI:H/MA:X" score as 4.1', () => {
-    const { score } = calculateTemporalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:M/IR:M/AR:M/MAV:A/MAC:H/MPR:L/MUI:N/MS:X/MC:N/MI:H/MA:X'
-    );
-    expect(score).to.equal(4.1);
+describe('Calculate correctly base scores', () => {
+  Object.entries(cvssTests).map(entry => {
+    const cvss = entry[0];
+    const baseScore = entry[1][0];
+    it(`should calculate a score of ${baseScore} for ${cvss}`, () => {
+      const { score } = calculateBaseScore(cvss);
+      expect(score).to.equal(baseScore);
+    });
   });
 });
 
-describe('Calculator for environmental scope', () => {
-  it('should calculate "CVSS:3.1/AV:A/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N/E:U/RL:T/RC:C/CR:X/IR:L/AR:L/MAV:N/MAC:H/MPR:L/MUI:N/MS:U/MC:L/MI:L/MA:L" score as 5.4', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N/E:U/RL:T/RC:C/CR:X/IR:L/AR:L/MAV:N/MAC:H/MPR:L/MUI:N/MS:U/MC:L/MI:L/MA:L'
-    );
-    expect(score).to.equal(3.6);
-  });
-
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:N/A:N/E:P/RL:W/RC:C/IR:L/AR:L/MAV:A/MAC:H/MPR:L/MUI:N/MS:C/MI:L/MA:L" score as 4.0', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:L/UI:N/S:C/C:L/I:N/A:N/E:P/RL:W/RC:C/IR:L/AR:L/MAV:A/MAC:H/MPR:L/MUI:N/MS:C/MI:L/MA:L'
-    );
-    expect(score).to.equal(4.0);
-  });
-
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N" score as 0.0', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N'
-    );
-    expect(score).to.equal(0);
-  });
-
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:H/RL:U/RC:C/CR:M/IR:M/AR:M/MAV:N/MAC:L/MPR:N/MUI:N/MS:C/MC:H/MI:H/MA:H" score as 10.0', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:H/RL:U/RC:C/CR:M/IR:M/AR:M/MAV:N/MAC:L/MPR:N/MUI:N/MS:C/MC:H/MI:H/MA:H'
-    );
-    expect(score).to.equal(10);
-  });
-
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:M/IR:M/AR:L/MAV:N/MAC:H/MPR:N/MUI:R/MS:U/MC:N/MI:N/MA:L" score as 2.4', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:M/IR:M/AR:L/MAV:N/MAC:H/MPR:N/MUI:R/MS:U/MC:N/MI:N/MA:L'
-    );
-    expect(score).to.equal(2.4);
-  });
-
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MC:N/MI:H/MA:N" score as 4.8', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MC:N/MI:H/MA:N'
-    );
-    expect(score).to.equal(4.8);
-  });
-
-  it('Should calculate "CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MS:C/MC:N/MI:H/MA:N" environmental score as 5.6', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:H/UI:R/S:U/C:L/I:L/A:L/CR:H/IR:M/AR:H/MAV:A/MAC:H/MPR:N/MUI:R/MS:C/MC:N/MI:H/MA:N'
-    );
-    expect(score).to.equal(5.6);
+describe('Calculate correctly temporal scores', () => {
+  Object.entries(cvssTests).map(entry => {
+    const cvss = entry[0];
+    const temporalScore = entry[1][1];
+    it(`should calculate a score of ${temporalScore} for ${cvss}`, () => {
+      const { score } = calculateTemporalScore(cvss);
+      expect(score).to.equal(temporalScore);
+    });
   });
 });
 
-describe('Calculate correctly impact and exploitability', () => {
-  it('base impact should be 0', () => {
-    const { impact, exploitability } = calculateBaseScore(
-      'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N'
-    );
-    expect(impact).to.equal(3.8);
-    expect(exploitability).to.equal(1);
-  });
-
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N" base score as 6.1', () => {
-    const { score } = calculateBaseScore(
-      'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N'
-    );
-    expect(score).to.equal(5.1);
-  });
-
-  it('should calculate "CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N" environmental score as 6.1', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:H/IR:H/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N'
-    );
-    expect(score).to.equal(0);
-  });
-});
-
-describe('v3.0 and 3.1 are calculated with their respectives rules', () => {
-  it('should calculate "CVSS:3.1/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L" environmental score as 6.1', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.1/AV:A/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L'
-    );
-    expect(score).to.equal(6.1);
-  });
-  it('should calculate "CVSS:3.0/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L" environmental score as 6.2', () => {
-    const { score } = calculateEnvironmentalScore(
-      'CVSS:3.0/AV:A/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/E:H/RL:U/RC:C/MAV:P/MAC:H/MPR:N/MUI:R/MS:C/MC:L'
-    );
-    expect(score).to.equal(6.2);
+describe('Calculate correctly environmental scores', () => {
+  Object.entries(cvssTests).map(entry => {
+    const cvss = entry[0];
+    const environmentalScore = entry[1][2];
+    it(`should calculate a score of ${environmentalScore} for ${cvss}`, () => {
+      const { score } = calculateEnvironmentalScore(cvss);
+      expect(score).to.equal(environmentalScore);
+    });
   });
 });
