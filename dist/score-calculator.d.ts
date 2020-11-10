@@ -11,6 +11,7 @@ declare type ScoreResult = {
     exploitability: number;
     metricsMap: Map<Metric, MetricValue>;
 };
+export declare const populateUndefinedMetrics: (metricsMap: Map<Metric, MetricValue>) => Map<Metric, MetricValue>;
 export declare const calculateEnvironmentalScore: (cvssString: string) => ScoreResult;
 export declare const calculateBaseScore: (cvssString: string) => ScoreResult;
 export declare const calculateTemporalScore: (cvssString: string) => ScoreResult;

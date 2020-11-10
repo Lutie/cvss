@@ -1,4 +1,4 @@
-import { BaseMetric, EnvironmentalMetric, environmentalMetrics, TemporalMetric, temporalMetrics } from './models';
+import { BaseMetric, EnvironmentalMetric, environmentalMetrics, metricsIndex, TemporalMetric, temporalMetrics } from './models';
 import { validate } from './validator';
 // https://www.first.org/cvss/v3.1/specification-document#7-4-Metric-Values
 const baseMetricValueScores = {
@@ -17,26 +17,25 @@ const temporalMetricValueScores = {
     [TemporalMetric.REPORT_CONFIDENCE]: { X: 1, U: 0.92, R: 0.96, C: 1 }
 };
 const environmentalMetricValueScores = {
-    [EnvironmentalMetric.ATTACK_VECTOR]: { N: 0.85, A: 0.62, L: 0.55, P: 0.2, X: 0.62 },
-    [EnvironmentalMetric.ATTACK_COMPLEXITY]: { X: 0.44, L: 0.77, H: 0.44 },
+    [EnvironmentalMetric.ATTACK_VECTOR]: baseMetricValueScores[BaseMetric.ATTACK_VECTOR],
+    [EnvironmentalMetric.ATTACK_COMPLEXITY]: baseMetricValueScores[BaseMetric.ATTACK_COMPLEXITY],
     [EnvironmentalMetric.PRIVILEGES_REQUIRED]: null,
-    [EnvironmentalMetric.USER_INTERACTION]: { N: 0.85, R: 0.62, X: 0.62 },
-    [EnvironmentalMetric.SCOPE]: { U: 0, C: 0, X: 0 },
-    [EnvironmentalMetric.CONFIDENTIALITY]: { N: 0, L: 0.22, H: 0.56, X: 0.22 },
-    [EnvironmentalMetric.INTEGRITY]: { N: 0, L: 0.22, H: 0.56, X: 0.56 },
-    [EnvironmentalMetric.AVAILABILITY]: { N: 0, L: 0.22, H: 0.56, X: 0.22 },
+    [EnvironmentalMetric.USER_INTERACTION]: baseMetricValueScores[BaseMetric.USER_INTERACTION],
+    [EnvironmentalMetric.SCOPE]: baseMetricValueScores[BaseMetric.SCOPE],
+    [EnvironmentalMetric.CONFIDENTIALITY]: baseMetricValueScores[BaseMetric.CONFIDENTIALITY],
+    [EnvironmentalMetric.INTEGRITY]: baseMetricValueScores[BaseMetric.INTEGRITY],
+    [EnvironmentalMetric.AVAILABILITY]: baseMetricValueScores[BaseMetric.AVAILABILITY],
     [EnvironmentalMetric.CONFIDENTIALITY_REQUIREMENT]: { M: 1, L: 0.5, H: 1.5, X: 1 },
     [EnvironmentalMetric.INTEGRITY_REQUIREMENT]: { M: 1, L: 0.5, H: 1.5, X: 1 },
     [EnvironmentalMetric.AVAILABILITY_REQUIREMENT]: { M: 1, L: 0.5, H: 1.5, X: 1 }
 };
 const getPrivilegesRequiredNumericValue = (value, scopeValue) => {
-    if (scopeValue !== 'U' && scopeValue !== 'C' && scopeValue !== 'X') {
+    if (scopeValue !== 'U' && scopeValue !== 'C') {
         throw new Error(`Unknown Scope value: ${scopeValue}`);
     }
     switch (value) {
         case 'N':
             return 0.85;
-        case 'X':
         case 'L':
             return scopeValue !== 'C' ? 0.62 : 0.68;
         case 'H':
@@ -92,7 +91,9 @@ export const calculateMiss = (metricsMap) => {
 // Impact =
 //   If Scope is Unchanged 	6.42 × ISS
 //   If Scope is Changed 	7.52 × (ISS - 0.029) - 3.25 × (ISS - 0.02)
-export const calculateImpact = (metricsMap, iss) => metricsMap.get(BaseMetric.SCOPE) !== 'C' ? 6.42 * iss : 7.52 * (iss - 0.029) - 3.25 * Math.pow(iss - 0.02, 15);
+export const calculateImpact = (metricsMap, iss) => metricsMap.get(BaseMetric.SCOPE) !== 'C'
+    ? 6.42 * iss
+    : 7.52 * (iss - 0.029) - 3.25 * Math.pow(iss - 0.02, 15);
 // https://www.first.org/cvss/v3.1/specification-document#7-3-Environmental-Metrics-Equations
 // ModifiedImpact =
 // If ModifiedScope is Unchanged	6.42 × MISS
@@ -121,18 +122,23 @@ const roundUp = (input) => {
     const intInput = Math.round(input * 100000);
     return intInput % 10000 === 0 ? intInput / 100000 : (Math.floor(intInput / 10000) + 1) / 10;
 };
+// populate temp and env metrics if not provided
+export const populateUndefinedMetrics = (metricsMap) => {
+    [...temporalMetrics, ...environmentalMetrics].map((metric) => {
+        if (![...metricsMap.keys()].includes(metric))
+            metricsMap.set(metric, metricsIndex[metric] ? metricsMap.get(metricsIndex[metric]) : 'X');
+        if (metricsMap.get(metric) === 'X')
+            metricsMap.set(metric, metricsMap.get(metricsIndex[metric]) ? metricsMap.get(metricsIndex[metric]) : 'X');
+    });
+    return metricsMap;
+};
 // https://www.first.org/cvss/v3.1/specification-document#7-3-Environmental-Metrics-Equations
 // If ModifiedImpact <= 0 =>	0; else
 // If ModifiedScope is Unchanged =>	Roundup (Roundup [Minimum ([ModifiedImpact + ModifiedExploitability], 10)] × ExploitCodeMaturity × RemediationLevel × ReportConfidence)
 // If ModifiedScope is Changed =>	Roundup (Roundup [Minimum (1.08 × [ModifiedImpact + ModifiedExploitability], 10)] × ExploitCodeMaturity × RemediationLevel × ReportConfidence)
 export const calculateEnvironmentalScore = (cvssString) => {
-    const { metricsMap, versionStr } = validate(cvssString);
-    // populate temp and env metrics if not provided
-    [...temporalMetrics, ...environmentalMetrics].map((metric) => {
-        if (![...metricsMap.keys()].includes(metric)) {
-            metricsMap.set(metric, 'X');
-        }
-    });
+    let { metricsMap, versionStr } = validate(cvssString);
+    metricsMap = populateUndefinedMetrics(metricsMap);
     const miss = calculateMiss(metricsMap);
     const impact = calculateMImpact(metricsMap, miss, versionStr);
     const exploitability = calculateMExploitability(metricsMap);

@@ -85,3 +85,13 @@ export const environmentalMetrics = [
     EnvironmentalMetric.CONFIDENTIALITY_REQUIREMENT,
     EnvironmentalMetric.INTEGRITY_REQUIREMENT
 ];
+export const metricsIndex = {
+    'MAV': BaseMetric.ATTACK_VECTOR,
+    'MAC': BaseMetric.ATTACK_COMPLEXITY,
+    'MPR': BaseMetric.PRIVILEGES_REQUIRED,
+    'MUI': BaseMetric.USER_INTERACTION,
+    'MS': BaseMetric.SCOPE,
+    'MC': BaseMetric.CONFIDENTIALITY,
+    'MI': BaseMetric.INTEGRITY,
+    'MA': BaseMetric.AVAILABILITY,
+};

@@ -26,6 +26,7 @@ const cvssTests = {
   'CVSS:3.1/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L':  [6.2, 6.2, 6.1],
   'CVSS:3.1/AV:P/AC:H/PR:N/UI:R/S:C/C:L/I:H/A:L/MUI:R/MS:U/MC:L': [6.2, 6.2, 5.1],
   'CVSS:3.1/AV:P/AC:H/PR:L/UI:R/S:C/C:L/I:L/A:L/E:U/RL:O/RC:U/CR:M/IR:M/AR:M/MAV:A/MAC:L/MPR:L/MUI:N/MC:N/MI:H': [4.4, 3.5, 6.1],
+  'CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N/RL:O/CR:L': [8.6, 8.2, 6.0],
 }
 
 describe('Calculator', () => {

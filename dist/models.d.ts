@@ -31,7 +31,7 @@ export declare type AnyMetric = BaseMetric & TemporalMetric & EnvironmentalMetri
 export declare type BaseMetricValue = 'A' | 'C' | 'H' | 'L' | 'N' | 'P' | 'R' | 'U';
 export declare type TemporalMetricValue = 'X' | 'F' | 'H' | 'O' | 'T' | 'W' | 'U' | 'P' | 'C' | 'R';
 export declare type EnvironmentalMetricValue = BaseMetricValue | 'M' | 'X';
-export declare type MetricValue = BaseMetricValue | TemporalMetricValue | EnvironmentalMetricValue;
+export declare type MetricValue = BaseMetricValue | TemporalMetricValue | EnvironmentalMetricValue | any;
 export declare type MetricValues<M extends Metric = Metric, V extends MetricValue = MetricValue> = Record<M, V[]>;
 export declare const baseMetricValues: MetricValues<BaseMetric, BaseMetricValue>;
 export declare const environmentalMetricValues: MetricValues<EnvironmentalMetric, EnvironmentalMetricValue>;
@@ -41,3 +41,6 @@ export declare type Metrics<M = Metric> = ReadonlyArray<M>;
 export declare const baseMetrics: Metrics<BaseMetric>;
 export declare const temporalMetrics: Metrics<TemporalMetric>;
 export declare const environmentalMetrics: Metrics<EnvironmentalMetric>;
+export declare const metricsIndex: {
+    [key: string]: BaseMetric;
+};
