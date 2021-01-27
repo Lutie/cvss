@@ -146,7 +146,7 @@ const humanizeBaseMetricValue = (value, metric) => {
  * Stringify an score into a severity string ('None' | 'Low' | 'Medium' | 'High' | 'Critical')
  * @param score
  */
-const toSeverity = (score) => score <= 0 ? 'None' : score <= 3 ? 'Low' : score <= 6 ? 'Medium' : score <= 8.5 ? 'High' : 'Critical';
+const toSeverity = (score) => score <= 0 ? 'None' : score <= 3.9 ? 'Low' : score <= 6.9 ? 'Medium' : score <= 8.9 ? 'High' : 'Critical';
 
 const VERSION_REGEX = /^CVSS:(\d(?:\.\d)?)(.*)?$/;
 const parseVersion = (cvssStr) => {
