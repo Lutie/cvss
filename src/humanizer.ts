@@ -55,4 +55,4 @@ type Severity = 'None' | 'Low' | 'Medium' | 'High' | 'Critical';
  * @param score
  */
 export const toSeverity = (score: number): Severity =>
-  score <= 0 ? 'None' : score <= 3 ? 'Low' : score <= 6 ? 'Medium' : score <= 8.5 ? 'High' : 'Critical';
+  score <= 0 ? 'None' : score <= 3.9 ? 'Low' : score <= 6.9 ? 'Medium' : score <= 8.9 ? 'High' : 'Critical';
